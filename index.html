@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <!--The viewport meta tag is used to improve the presentation and behavior of the samples
+    on iOS devices-->
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>Prueba Practica final</title>
+    
+    <link rel="stylesheet" href="http://js.arcgis.com/3.8/js/dojo/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" href="https://js.arcgis.com/3.27/esri/css/esri.css">
+    <link rel="stylesheet" href="css/layout.css"/>
+    
+    
+    <script>var dojoConfig = { parseOnLoad: true };</script>
+    <script src="https://js.arcgis.com/3.27/"></script>
+    
+    <style>
+      #search {
+        display: block;
+        position: absolute;
+        z-index: 2;
+        top: 10px;
+        right: 10px;
+      }
+    </style>
+    <script>
+      
+      var map;
+      var tb;
+      require(["esri/map",
+      "esri/layers/FeatureLayer",
+      "esri/dijit/FeatureTable",
+      "esri/geometry/Extent",
+      "esri/dijit/Legend",
+      "esri/dijit/HomeButton",
+      "esri/dijit/Search",
+      "esri/dijit/BasemapGallery",
+      "esri/dijit/OverviewMap",
+      "esri/dijit/Scalebar",
+      
+      
+      "esri/toolbars/draw",
+      "esri/graphic",
+      "esri/graphicsUtils",
+      
+      "esri/symbols/SimpleFillSymbol",
+      "esri/symbols/SimpleLineSymbol",
+      "esri/symbols/SimpleMarkerSymbol",
+      "esri/Color",
+      
+      "esri/tasks/query",
+      
+      "esri/dijit/PopupTemplate",
+      
+      "dojo/on",
+      
+      "dijit/TitlePane",
+      "dijit/layout/TabContainer",
+      "dijit/layout/ContentPane",
+      "dijit/layout/BorderContainer",
+      "dojo/domReady!"],
+      function(
+      Map, FeatureLayer, FeatureTable, Extent, Legend, HomeButton, Search, BasemapGallery, OverviewMap, Scalebar,
+      Draw, Graphic, graphicsUtils,
+      SimpleFillSymbol, SimpleLineSymbol, SimpleMarkerSymbol, Color,
+      Query,
+      PopupTemplate,
+      on
+      ) {
+        
+        // Boton "Seleccionar ciudades"
+        // on(dojo.byId("pintaYQuery"), "click",function (){
+        //   tb = new Draw (map);
+        //   tb.activate(Draw.POLYGON);
+        //   tb.on("draw-end",function (evt) {
+            
+        //     // gemoetria del evento
+        //     var geometryInputCities = evt.geometry;
+            
+        //     //definicion de la simbologia del poligono
+        //     var tbSymbolCities = new SimpleFillSymbol(SimpleFillSymbol.STYLE_SOLID, 
+        //       new SimpleLineSymbol(SimpleLineSymbol.STYLE_DASHDOT, 
+        //       new Color([255, 255, 0]), 2), 
+        //       new Color([255, 255, 0, 0.2])
+        //     );
+            
+        //     //borra los poligonos dibujados
+        //     map.graphics.clear();
+            
+        //     //Para añadir el Graphic layer al mapa. 
+        //     var graphicPolygon = new Graphic(geometryInputCities, tbSymbolCities);
+        //     map.graphics.add(graphicPolygon);
+            
+        //     //Ahora vamos a selecionar las ciudades
+        //     //Simbolo de seleción  de las ciudades
+        //     var sbSelectCities = new SimpleMarkerSymbol({
+        //       "type": "esriSMS",
+        //       "style": "esriSMSCircle",
+        //       "color": [252,146,114],
+        //       "size": 10,
+        //       "outline": {
+        //         "color": [222,45,38],
+        //         "width": 1
+        //       }
+        //     });
+            
+        //     ftCities.setSelectionSymbol(sbSelectCities);
+            
+        //     //Hace la seleción apartir de la area dibuja en el mapa
+        //     var queryCities = new Query();
+        //     queryCities.geometry = geometryInputCities;
+        //     ftCities.selectFeatures(queryCities, FeatureLayer.SELECTION_NEW, function(features){
+        //       TableCities.filterSelectedRecords()
+        //     });
+        //   });
+        // });
+        
+        // Boton "Ir al Estado"
+        on(dojo.byId("progButtonNode"), "click",function (){
+            
+          var inputState = dojo.byId("dtb").value; //obtiene el estado del input
+          
+          //Simbologia del estado selecionado
+          var sbState = new SimpleFillSymbol(SimpleFillSymbol.STYLE_SOLID,
+            new SimpleLineSymbol(SimpleLineSymbol.STYLE_DASHDOT,
+            new Color([255,0,0]), 2),new Color([255,255,0,0.5])
+          );
+          
+          //asignación de la simbologia a la entidad selecionada
+          ftStates.setSelectionSymbol(sbState);
+          
+          //Definición de la consulta
+          var queryState = new Query();
+          queryState.where = `state_name = '${inputState}'`; // expreisón para hacer la selección
+          ftStates.selectFeatures(queryState, FeatureLayer.SELECTION_NEW, function (selection){
+            // Hacemos zoom extesión sobre el estado seleccionado
+            var centerSt = graphicsUtils.graphicsExtent(selection).getCenter();
+            var extentSt = esri.graphicsExtent(selection);
+            
+            map.setExtent(extentSt.getExtent().expand(2));
+            map.centerAt(centerSt);
+          });
+          
+        });
+       
+        // Limpiar selección de las ciudades
+        // on(dojo.byId("clear"),"click",function (){
+        //   ftCities.clearSelection();
+        //   map.graphics.clear();
+        //   TableCities.clearFilter()
+        //   tb.deactivate()
+        // });
+          
+        //Definición de la extensión incial del mapa
+        var extentInitial = new Extent({
+          "xmin": -62504243.0516673,
+          "ymin": 5174783.71287201,
+          "xmax": -47984876.65484536,
+          "ymax": 12737769.03951848,
+          "spatialReference": {
+            "wkid": 102100
+          }
+        });
+        
+        //Parametros del Mapa
+        map = new Map("map", {
+          basemap: "topo",
+          extent: extentInitial, //define la extension inical del mapa
+          zoom: 4,
+          sliderStyle: "small",
+        });
+        
+        //Widget para volver a la extension inicial
+        var homeButton = new HomeButton({
+          map: map,
+          extent: extentInitial,
+          visible: true
+        }, "HomeButton");
+        homeButton.startup()
+        
+        map.on("load", function(evt) {
+          map.resize();
+          map.reposition();
+        });
+          
+          
+        //Configuración de la ventana emergente para obtener infomación de la capa de States
+        var popupStates = new PopupTemplate({
+          title: "Estado de {state_name}, {state_abbr}",
+          fieldInfos: [{
+            fieldName: "pop2000",
+            label: "Población:",
+            visible: true
+          }, {
+            fieldName: "pop00_sqmi",
+            label: "Población por sqmi:",
+            visible: true
+          }, {
+            fieldName: "ss6.gdb.States.area",
+            label: "Area en sqmi:",
+            visible: true,
+            format: {places: 0}
+          }]
+        });
+        
+        //Capa de Cities
+        var ftCities = new FeatureLayer("http://sampleserver6.arcgisonline.com/arcgis/rest/services/USA/MapServer/0",{
+          outFields:["*"]
+        }); 
+        
+        //Capa de Highways
+        var ftHighways = new FeatureLayer("http://sampleserver6.arcgisonline.com/arcgis/rest/services/USA/MapServer/1");
+        
+        //Capa de States
+        var ftStates = new FeatureLayer("http://sampleserver6.arcgisonline.com/arcgis/rest/services/USA/MapServer/2", {
+          infoTemplate: popupStates, //llama la ventana emergente
+          outFields:["*"] //llama a todos los campos de la capa
+        });
+          
+        //Capa de Counties
+        var ftCounties =new FeatureLayer("http://sampleserver6.arcgisonline.com/arcgis/rest/services/USA/MapServer/3", {opacity: 0.35});
+        
+        //Añadir las capas al mapa
+        map.addLayers([ftStates, ftCounties, ftHighways, ftCities]);
+        
+        //Widget para visualizar la leyenda del mapa
+        var legend = new Legend ({
+          map: map
+        },"legendDiv");
+        legend.startup();
+        
+        //Widget busquedas
+        var search = new Search({
+          map: map,
+        }, "Search");
+        search.startup();
+        
+        //widget para cambiar el mapa base
+        var basemapGallery = new BasemapGallery({
+          map:map
+        },"basemapGallery");
+        
+        basemapGallery.startup();
+        
+        //Widget de Overview
+        var Overview = new OverviewMap({
+          map:map,
+          visible: true,
+          attachTo: "bottom-left",
+          height: 200,
+          width:200
+        });
+        Overview.startup();
+        
+        //Widget de la escala
+        var scalebar = new Scalebar({
+          map: map,
+          attachTo: "bottom-center",
+          scalebarUnit: "metric"
+        });
+        
+        // ftCities.on("load", function(){
+          
+        //   TableCities =  new FeatureTable({
+        //     featureLayer : ftCities,
+        //     map : map,
+        //     outFields:["st", "areaname","class", "pop2000"],
+        //     syncSelection: true,
+        //     zoomToSelection:true,
+        //     fieldInfos: [{
+        //       name: 'st',
+        //       alias: 'Estado'
+        //     },
+        //     {
+        //       name: 'areaname',
+        //       alias: 'Ciudad'
+        //     },{
+        //       name: 'class',
+        //       alias: 'Clase'
+        //     },{
+        //       name: 'pop2000',
+        //       alias: 'Habitantes'
+        //     }],
+        //   }, "TableNode");
+          
+        //   TableCities.startup();
+        // })   
+      }); 
+    </script>
+      
+  </head>
+    
+  <body class="claro">
+    <div id="mainWindow"
+    data-dojo-type="dijit.layout.BorderContainer"
+    data-dojo-props="design:'headline', gutters:false"
+    style="width:100%; height:100%;">
+    
+    <div id="header"
+      data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region:'top'">
+      
+      Master GIS ESRI España
+      <div id="subheader">Prueba final: posible solución</div>
+      
+    </div>
+    <div data-dojo-type="dijit.layout.ContentPane" id="leftPane" data-dojo-props="region:'left'">
+      <div data-dojo-type="dijit.layout.TabContainer">
+        
+        <div data-dojo-type="dijit.layout.ContentPane" data-dojo-props="title:'Leyenda', selected:true">
+          <div id="legendDiv"></div>
+        </div>
+        
+        <!-- <div data-dojo-type="dijit.layout.ContentPane" data-dojo-props="title:'Tareas'">
+          Operaciones
+          <button id="pintaYQuery" type="button">Seleccionar ciudades</button>
+           -->
+          <!--Para limpiar la selecíón--> 
+          <!-- <button id="clear" type ="button">Limpiar selección</button> -->
+          
+          <!--Tabla de atributos-->
+          <!-- <div id="Grid" data-dojo-type="dijit.layout.TabContainer">
+            <div id="TableNode"></div>
+          </div>
+          
+        </div> -->
+      </div>
+    </div>
+    
+    <div id="map" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region:'center'">
+      
+      <!--Ubicación del Home button-->  
+      <div id="HomeButton"></div>
+      
+      <!--Ubicación del herramienta de búsqueda-->
+      <div id="Search"></div>
+      
+      <!--Ubicación del galeria de mapas base-->
+      <div id="panelGallery">
+        <div data-dojo-type="dijit.TitlePane" data-dojo-props="title:'<b>Basemap Gallery</b>', open: false">
+          <div data-dojo-type="dijit.layout.ContentPane">
+            <div id="basemapGallery"></div>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+    
+    <div id="footer" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region:'bottom'">
+      <label for="dtb">Introduzca el nombre de un estado:</label> <input id="dtb" data-dojo-type="dijit/form/TextBox" value="Washington" />
+      <button id="progButtonNode" type="button">Ir al estado</button>
+    </div>
+    
+  </div>
+</body>
+
+</html>

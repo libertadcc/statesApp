@@ -1,0 +1,100 @@
+      html, body { 
+        height: 100%; width: 100%; margin: 0; 
+      } 
+      body{
+        background-color:white; overflow:hidden; 
+        font-family: "Trebuchet MS"; 
+      }
+       #map {
+       margin: 5px;
+        border:solid 4px #224a54;
+        -moz-border-radius: 4px;
+        
+      }
+      #map_root{
+        width: 100% !important;
+        height: 100% !important;
+      }
+      #header {
+        background-image: url(../images/banner.jpg); background-repeat: repeat-x;
+        margin: 2px;
+        border: solid 4px #224a54;
+        color:white; font-size:18pt; 
+        text-align:left; font-weight:bold; height:70px;
+      }
+      #subheader {
+        font-size:small;
+        color:white;
+        padding-left:20px;
+      }
+      #rightPane{
+        background-color:white;
+        color:#3f3f3f;
+        border: solid 2px #224a54;
+        width:20%;
+      }
+      #leftPane{
+        margin: 5px;
+        padding:2px;
+        background-color:white;
+        color:#3f3f3f;
+        border: solid 2px #224a54;
+        width:20%;
+     }
+
+      #footer {
+        margin: 2px;
+        border: solid 2px #224a54;
+        background-color:#ecefe4;color:#3f3f3f;
+       font-size:10pt; text-align:center; height:40px;
+      }
+      .dijitTabInnerDiv{
+        background-color:#ecefe4;
+      }
+      #tabs{
+        padding:5px;
+      }
+    /* Estilo para la ubcación del widget de Home Button */  
+      #HomeButton {
+        position: absolute;
+        top: 100px;
+        left: 27px;
+        z-index: 30;
+      }
+    /* Estilo para la ubcación del widget de busqueda */
+      #Search {
+        display: block;
+        position: absolute;
+        z-index:30;
+        top: 25px;
+        left: 75px;
+      }
+    /* Estilo para la ubcación del panel del basemap gallery */
+      #panelGallery {
+        position: absolute;
+        top: 25px;
+        right: 50px;
+        z-index: 30;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+    /* Estilo del widget de Basemap*/
+      #basemapGallery {
+        width: 300px;
+        height: 250px;
+        overflow: auto;
+      }
+    /*Caracteristica del espacio para tabla de atributos*/
+       #Grid{
+        margin-top:25px;
+        height: 70vh;
+      } 
+     /*Posición de la tabla de atributos*/
+      /* #TableNode{
+        position: relative;
+      } */
+
+      /* .dgrid-header.dgrid-header-row.ui-widget-header{
+        clear: both;
+        z-index: 1;
+      } */
+      
